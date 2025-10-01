@@ -6,16 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ShopService {
 
     private final ShopRepository shopRepository;
-
-    public ShopService(ShopRepository shopRepository) {
-        this.shopRepository = shopRepository;
-    }
 
     public List<Shop> findAll() {
         return shopRepository.findAll();
