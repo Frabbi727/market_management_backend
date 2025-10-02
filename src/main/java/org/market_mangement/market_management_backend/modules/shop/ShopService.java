@@ -24,7 +24,24 @@ public class ShopService {
                 .orElseThrow(() -> new EntityNotFoundException("Shop not found with id=" + id));
     }
 
-/*    @Transactional
+    public Shop findByCode(String code) {
+        return shopRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Shop not found with code=" + code));
+    }
+
+    public List<Shop> findByMarket(String market) {
+        return shopRepository.findByMarket(market);
+    }
+
+    public List<Shop> findByFloor(Integer floor) {
+        return shopRepository.findByFloor(floor);
+    }
+
+    public List<Shop> findActiveShops() {
+        return shopRepository.findByActive(true);
+    }
+
+    @Transactional
     public Shop create(Shop shop) {
         return shopRepository.save(shop);
     }
@@ -32,9 +49,19 @@ public class ShopService {
     @Transactional
     public Shop update(Long id, Shop updatedShop) {
         Shop existing = findById(id);
-        existing.setName(updatedShop.getName());
-        existing.setAddress(updatedShop.getAddress());
-        existing.setPhone(updatedShop.getPhone());
+        existing.setCode(updatedShop.getCode());
+        existing.setShopName(updatedShop.getShopName());
+        existing.setMarket(updatedShop.getMarket());
+        existing.setFloor(updatedShop.getFloor());
+        existing.setSide(updatedShop.getSide());
+        existing.setLocation(updatedShop.getLocation());
+        existing.setLocationNo(updatedShop.getLocationNo());
+        existing.setRegistrationNo(updatedShop.getRegistrationNo());
+        existing.setAreaSqft(updatedShop.getAreaSqft());
+        existing.setOwnerName(updatedShop.getOwnerName());
+        existing.setOwnerPhone(updatedShop.getOwnerPhone());
+        existing.setRemarks(updatedShop.getRemarks());
+        existing.setActive(updatedShop.getActive());
         return shopRepository.save(existing);
     }
 
@@ -42,5 +69,5 @@ public class ShopService {
     public void delete(Long id) {
         Shop existing = findById(id);
         shopRepository.delete(existing);
-    }*/
+    }
 }
