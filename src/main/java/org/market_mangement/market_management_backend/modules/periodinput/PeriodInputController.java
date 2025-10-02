@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/period-inputs")
+@RequestMapping("/api/v1/periods")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class PeriodInputController {
@@ -38,7 +38,7 @@ public class PeriodInputController {
         return ResponseEntity.status(HttpStatus.CREATED).body(periodInputService.createPeriodInput(periodInput));
     }
 
-    @PutMapping("/{period}")
+    @PutMapping("/{period}/inputs")
     public ResponseEntity<PeriodInput> updatePeriodInput(@PathVariable String period, @Valid @RequestBody PeriodInput periodInput) {
         return ResponseEntity.ok(periodInputService.updatePeriodInput(period, periodInput));
     }

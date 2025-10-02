@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Setter
@@ -20,9 +21,8 @@ public class PeriodInput {
 
     @Id
     @NotNull
-    @Size(min = 7, max = 7)
-    @Column(nullable = false, length = 7, columnDefinition = "char(7)")
-    private String period;
+    @Column(nullable = false)
+    private LocalDate period;
 
     @NotNull
     @PositiveOrZero

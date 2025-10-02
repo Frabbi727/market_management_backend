@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +36,8 @@ public class Invoice {
     private Long id;
 
     @NotNull
-    @Size(min = 7, max = 7)
-    @Column(nullable = false, length = 7, columnDefinition = "char(7)")
-    private String period;
+    @Column(nullable = false)
+    private LocalDate period;
 
     @NotNull
     @Column(name = "shop_id", nullable = false)
@@ -60,10 +60,10 @@ public class Invoice {
     private String meta = "{}";
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private ZonedDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private ZonedDateTime updatedAt;
+    private LocalDate updatedAt;
 
     @PrePersist
     protected void onCreate() {
@@ -72,12 +72,12 @@ public class Invoice {
         if (locked == null) locked = false;
         if (revision == null) revision = 1;
         if (meta == null) meta = "{}";
-        createdAt = ZonedDateTime.now();
-        updatedAt = ZonedDateTime.now();
+        createdAt = LocalDate.now();
+        updatedAt = LocalDate.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = ZonedDateTime.now();
+        updatedAt = LocalDate.now();
     }
 }

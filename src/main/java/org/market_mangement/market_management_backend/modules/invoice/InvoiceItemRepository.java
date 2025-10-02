@@ -10,4 +10,5 @@ public interface InvoiceItemRepository extends JpaRepository<InvoiceItem, Long> 
     List<InvoiceItem> findByInvoiceId(Long invoiceId);
     List<InvoiceItem> findByItemType(ItemType itemType);
     List<InvoiceItem> findByIsOverridden(Boolean isOverridden);
+    List<InvoiceItem> findByInvoiceIdIn(List<Long> invoiceIds);
 }

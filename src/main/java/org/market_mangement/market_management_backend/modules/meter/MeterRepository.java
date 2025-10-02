@@ -10,4 +10,5 @@ public interface MeterRepository extends JpaRepository<Meter, Long> {
     List<Meter> findByShopId(Long shopId);
     List<Meter> findByUtilityType(UtilityType utilityType);
     List<Meter> findByActive(Boolean active);
+    List<Meter> findByShopIdIn(List<Long> shopIds);
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Setter
@@ -31,9 +32,9 @@ public class Reading {
     @Column(name = "meter_id", nullable = false)
     private Long meterId;
 
-    /** Billing period like '2025-01' */
-    @Column(nullable = false, length = 7, columnDefinition = "char(7)")
-    private String period;
+    /** Billing period date */
+    @Column(nullable = false)
+    private LocalDate period;
 
     @Column(name = "prev_reading", nullable = false, precision = 14, scale = 4)
     private BigDecimal prevReading;

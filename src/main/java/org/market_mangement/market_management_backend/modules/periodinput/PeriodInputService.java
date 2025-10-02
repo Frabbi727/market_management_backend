@@ -3,6 +3,7 @@ package org.market_mangement.market_management_backend.modules.periodinput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class PeriodInputService {
     }
 
     public PeriodInput updatePeriodInput(String period, PeriodInput periodInput) {
-        periodInput.setPeriod(period);
+        periodInput.setPeriod(LocalDate.parse(period));
         return periodInputRepository.save(periodInput);
     }
 

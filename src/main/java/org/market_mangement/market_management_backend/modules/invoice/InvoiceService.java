@@ -3,6 +3,7 @@ package org.market_mangement.market_management_backend.modules.invoice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class InvoiceService {
     }
 
     public List<Invoice> getInvoicesByPeriod(String period) {
-        return invoiceRepository.findByPeriod(period);
+        return invoiceRepository.findByPeriod(LocalDate.parse(period));
     }
 
     public List<Invoice> getInvoicesByShopId(Long shopId) {
@@ -29,7 +30,7 @@ public class InvoiceService {
     }
 
     public Optional<Invoice> getInvoiceByPeriodAndShopId(String period, Long shopId) {
-        return invoiceRepository.findByPeriodAndShopId(period, shopId);
+        return invoiceRepository.findByPeriodAndShopId(LocalDate.parse(period), shopId);
     }
 
     public List<Invoice> getInvoicesByStatus(String status) {

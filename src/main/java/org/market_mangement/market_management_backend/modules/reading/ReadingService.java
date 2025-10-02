@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,11 +29,11 @@ public class ReadingService {
     }
 
     public List<Reading> findByPeriod(String period) {
-        return readingRepository.findByPeriod(period);
+        return readingRepository.findByPeriod(LocalDate.parse(period));
     }
 
     public Reading findByMeterIdAndPeriod(Long meterId, String period) {
-        return readingRepository.findByMeterIdAndPeriod(meterId, period)
+        return readingRepository.findByMeterIdAndPeriod(meterId, LocalDate.parse(period))
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Reading not found for meter=" + meterId + " and period=" + period));
     }
