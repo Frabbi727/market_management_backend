@@ -12,6 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TariffService {
 
+
     private final TariffRepository tariffRepository;
 
     public List<Tariff> getAllTariffs() {
