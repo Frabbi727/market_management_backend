@@ -18,4 +18,6 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     List<Shop> findByActive(Boolean active);
 
     List<Shop> findByOwnerName(String ownerName);
+
+    List<Shop> findByMarketAndFloorOrderByIdDesc(String market, Integer floor);
 }

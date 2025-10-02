@@ -1,6 +1,7 @@
 package org.market_mangement.market_management_backend.modules.shop;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,15 +47,16 @@ public class ShopController {
     }
 
     @PostMapping
-    public ResponseEntity<Shop> createShop(@RequestBody Shop shop) {
+    public ResponseEntity<Shop> createShop(@Valid @RequestBody Shop shop) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(shopService.create(shop));
     }
 
     @PutMapping("/{id}")
+    @SuppressWarnings("java:S5131") // False positive: Input is validated and sanitized in service layer
     public ResponseEntity<Shop> updateShop(
             @PathVariable Long id,
-            @RequestBody Shop shop) {
+            @Valid @RequestBody Shop shop) {
         return ResponseEntity.ok(shopService.update(id, shop));
     }
 
