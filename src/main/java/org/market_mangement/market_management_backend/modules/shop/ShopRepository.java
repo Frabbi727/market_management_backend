@@ -11,13 +11,13 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
 
     Optional<Shop> findByCode(String code);
 
-    List<Shop> findByMarket(String market);
-
     List<Shop> findByFloor(Integer floor);
 
     List<Shop> findByActive(Boolean active);
 
     List<Shop> findByOwnerName(String ownerName);
 
-    List<Shop> findByMarketAndFloorOrderByIdDesc(String market, Integer floor);
+    List<Shop> findByMarketId(Long marketId);
+
+    List<Shop> findByMarketIdAndFloorOrderByIdDesc(Long marketId, Integer floor);
 }

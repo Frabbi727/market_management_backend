@@ -35,9 +35,9 @@ public class ReportsService {
     private final PeriodInputRepository periodInputRepository;
     private final TariffRepository tariffRepository;
 
-    public MarketSummaryDto getMarketSummary(String market, LocalDate period) {
-        // Get all shops in the market
-        List<Shop> shops = shopRepository.findByMarket(market);
+    public MarketSummaryDto getMarketSummary(Long marketId, LocalDate period) {
+        // Get all shops for this market
+        List<Shop> shops = marketId != null ? shopRepository.findByMarketId(marketId) : shopRepository.findAll();
         List<Long> shopIds = shops.stream().map(Shop::getId).collect(Collectors.toList());
 
         // Get all invoices for this period and market
@@ -51,7 +51,7 @@ public class ReportsService {
         KpiCardDto kpis = buildKpis(invoices, invoiceItems);
 
         // Build health panel
-        HealthPanelDto health = buildHealthPanel(market, period, shops, invoices);
+        HealthPanelDto health = buildHealthPanel(marketId, period, shops, invoices);
 
         // Build inputs snapshot
         InputsSnapshotDto inputs = buildInputsSnapshot(period, shops);
@@ -63,9 +63,9 @@ public class ReportsService {
                 .build();
     }
 
-    public InvoicePageDto getInvoicesTable(String market, LocalDate period, Integer page, Integer size) {
-        // Get shops in market
-        List<Shop> shops = shopRepository.findByMarket(market);
+    public InvoicePageDto getInvoicesTable(Long marketId, LocalDate period, Integer page, Integer size) {
+        // Get all shops for this market
+        List<Shop> shops = marketId != null ? shopRepository.findByMarketId(marketId) : shopRepository.findAll();
         List<Long> shopIds = shops.stream().map(Shop::getId).collect(Collectors.toList());
 
         // Create shop map for quick lookup
@@ -121,9 +121,9 @@ public class ReportsService {
                 .build();
     }
 
-    public List<ReadingStatusDto> getReadingStatus(String market, LocalDate period) {
-        // Get all shops in the market
-        List<Shop> shops = shopRepository.findByMarket(market);
+    public List<ReadingStatusDto> getReadingStatus(Long marketId, LocalDate period) {
+        // Get all shops for this market
+        List<Shop> shops = marketId != null ? shopRepository.findByMarketId(marketId) : shopRepository.findAll();
         Map<Long, Shop> shopMap = shops.stream()
                 .collect(Collectors.toMap(Shop::getId, shop -> shop));
 
@@ -201,9 +201,9 @@ public class ReportsService {
                 .build();
     }
 
-    private HealthPanelDto buildHealthPanel(String market, LocalDate period, List<Shop> shops, List<Invoice> invoices) {
+    private HealthPanelDto buildHealthPanel(Long marketId, LocalDate period, List<Shop> shops, List<Invoice> invoices) {
         // Check if inputs exist
-        Optional<PeriodInput> inputOpt = periodInputRepository.findById(String.valueOf(period));
+        Optional<PeriodInput> inputOpt = periodInputRepository.findById(period);
         boolean inputsOk = inputOpt.isPresent();
 
         // Check for missing readings
@@ -230,7 +230,7 @@ public class ReportsService {
     }
 
     private InputsSnapshotDto buildInputsSnapshot(LocalDate period, List<Shop> shops) {
-        Optional<PeriodInput> inputOpt = periodInputRepository.findById(String.valueOf(period));
+        Optional<PeriodInput> inputOpt = periodInputRepository.findById(period);
 
         if (inputOpt.isEmpty()) {
             return InputsSnapshotDto.builder().build();

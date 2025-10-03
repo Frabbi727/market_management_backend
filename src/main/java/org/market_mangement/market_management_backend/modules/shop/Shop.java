@@ -2,11 +2,13 @@ package org.market_mangement.market_management_backend.modules.shop;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.market_mangement.market_management_backend.modules.market.Market;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -18,7 +20,7 @@ import java.time.ZonedDateTime;
 @Table(
         name = "shops",
         indexes = {
-                @Index(name = "idx_shops_market", columnList = "market"),
+                @Index(name = "idx_shops_market_id", columnList = "market_id"),
                 @Index(name = "idx_shops_floor", columnList = "floor"),
                 @Index(name = "idx_shops_side", columnList = "side"),
                 @Index(name = "idx_shops_location_no", columnList = "location_no"),
@@ -55,12 +57,12 @@ public class Shop {
     private String shopName;
 
     /**
-     * Market tag (e.g., Market-1)
+     * Market relationship - Foreign key to markets table
      */
-    @NotBlank(message = "Market is required")
-    @Size(max = 64)
-    @Column(nullable = false, length = 64)
-    private String market;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "market_id", nullable = false)
+    @NotNull(message = "Market is required")
+    private Market market;
 
     /**
      * Floor number, use 0 for Ground if you like

@@ -35,15 +35,14 @@ public class BillingService {
 
     @Transactional
     public Map<String, Object> computeBills(String period, Boolean force) {
-        // Extract year-month from YYYY-MM-DD
-        String monthPeriod = period.substring(0, 7);
+        LocalDate billingPeriod = LocalDate.parse(period);
 
         Map<String, Object> result = new HashMap<>();
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
 
         // Validate inputs exist
-        Optional<PeriodInput> inputOpt = periodInputRepository.findById(monthPeriod);
+        Optional<PeriodInput> inputOpt = periodInputRepository.findById(billingPeriod);
         if (inputOpt.isEmpty()) {
             errors.add("Period inputs not found. Please set inputs first.");
             result.put("success", false);
@@ -75,7 +74,7 @@ public class BillingService {
 
         // Check for locked invoices
         List<Long> shopIds = shops.stream().map(Shop::getId).toList();
-        List<Invoice> existingInvoices = invoiceRepository.findByPeriodAndShopIdIn(LocalDate.parse(monthPeriod), shopIds);
+        List<Invoice> existingInvoices = invoiceRepository.findByPeriodAndShopIdIn(billingPeriod, shopIds);
         long lockedCount = existingInvoices.stream().filter(Invoice::getLocked).count();
 
         if (lockedCount > 0 && !force) {
@@ -127,7 +126,7 @@ public class BillingService {
         for (Shop shop : shops) {
             try {
                 // Skip if invoice is locked
-                Optional<Invoice> existingInvoice = invoiceRepository.findByPeriodAndShopId(LocalDate.parse(monthPeriod), shop.getId());
+                Optional<Invoice> existingInvoice = invoiceRepository.findByPeriodAndShopId(billingPeriod, shop.getId());
                 if (existingInvoice.isPresent() && existingInvoice.get().getLocked() && !force) {
                     skippedCount++;
                     continue;
@@ -144,7 +143,7 @@ public class BillingService {
                 Meter meter = meters.get(0); // Use first meter
 
                 // Get reading
-                Optional<Reading> readingOpt = readingRepository.findByMeterIdAndPeriod(meter.getId(), LocalDate.parse(monthPeriod));
+                Optional<Reading> readingOpt = readingRepository.findByMeterIdAndPeriod(meter.getId(), billingPeriod);
                 if (readingOpt.isEmpty()) {
                     warnings.add("Shop " + shop.getCode() + " has no reading. Skipped.");
                     skippedCount++;
@@ -180,7 +179,7 @@ public class BillingService {
                     invoice.setRevision(invoice.getRevision() + 1);
                 } else {
                     invoice = new Invoice();
-                    invoice.setPeriod(LocalDate.parse(monthPeriod));
+                    invoice.setPeriod(billingPeriod);
                     invoice.setShopId(shop.getId());
                     invoice.setTotal(total);
                     invoice.setStatus("UNPAID");

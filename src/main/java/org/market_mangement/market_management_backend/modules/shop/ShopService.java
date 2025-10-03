@@ -2,6 +2,8 @@ package org.market_mangement.market_management_backend.modules.shop;
 
 import java.util.List;
 
+import org.market_mangement.market_management_backend.modules.market.Market;
+import org.market_mangement.market_management_backend.modules.market.MarketRepository;
 import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ShopService {
 
     private final ShopRepository shopRepository;
+    private final MarketRepository marketRepository;
 
     public List<Shop> findAll() {
         return shopRepository.findAll();
@@ -30,12 +33,12 @@ public class ShopService {
                 .orElseThrow(() -> new EntityNotFoundException("Shop not found with code=" + code));
     }
 
-    public List<Shop> findByMarket(String market) {
-        return shopRepository.findByMarket(market);
-    }
-
     public List<Shop> findByFloor(Integer floor) {
         return shopRepository.findByFloor(floor);
+    }
+
+    public List<Shop> findByMarketId(Long marketId) {
+        return shopRepository.findByMarketId(marketId);
     }
 
     public List<Shop> findActiveShops() {
@@ -43,7 +46,28 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop create(Shop shop) {
+    public Shop create(ShopCreateDTO dto) {
+        // Fetch market by ID
+        Market market = marketRepository.findById(dto.getMarketId())
+                .orElseThrow(() -> new EntityNotFoundException("Market not found with id=" + dto.getMarketId()));
+
+        // Convert DTO to entity
+        Shop shop = new Shop();
+        shop.setShopNumber(dto.getShopNumber());
+        shop.setCode(dto.getCode());
+        shop.setShopName(dto.getShopName());
+        shop.setMarket(market);
+        shop.setFloor(dto.getFloor());
+        shop.setSide(dto.getSide());
+        shop.setLocation(dto.getLocation());
+        shop.setLocationNo(dto.getLocationNo());
+        shop.setRegistrationNo(dto.getRegistrationNo());
+        shop.setAreaSqft(dto.getAreaSqft());
+        shop.setOwnerName(dto.getOwnerName());
+        shop.setOwnerPhone(dto.getOwnerPhone());
+        shop.setRemarks(dto.getRemarks());
+        shop.setActive(dto.getActive());
+
         sanitizeShopInputs(shop);
 
         // Auto-generate code if not provided
@@ -52,25 +76,6 @@ public class ShopService {
         }
 
         return shopRepository.save(shop);
-    }
-
-    /**
-     * Generates unique shop code based on: shopName-market-floor-side-location
-     * Example: ELECTRONICS-MARKET1-F1-NORTH-CENTER
-     */
-    private String generateShopCode(String market, Integer floor) {
-        StringBuilder code = new StringBuilder();
-
-        // Add market (sanitized, uppercase, no spaces)
-        if (market != null && !market.isBlank()) {
-            code.append(sanitizeForCode(market));
-        }
-
-        // Add floor
-        int floorNum = (floor != null) ? floor : 0;
-        code.append("-F").append(floorNum);
-
-        return code.toString().toUpperCase();
     }
 
     /**
@@ -107,22 +112,29 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop update(Long id, Shop updatedShop) {
-        sanitizeShopInputs(updatedShop);
+    public Shop update(Long id, ShopUpdateDTO dto) {
         Shop existing = findById(id);
-        existing.setCode(updatedShop.getCode());
-        existing.setShopName(updatedShop.getShopName());
-        existing.setMarket(updatedShop.getMarket());
-        existing.setFloor(updatedShop.getFloor());
-        existing.setSide(updatedShop.getSide());
-        existing.setLocation(updatedShop.getLocation());
-        existing.setLocationNo(updatedShop.getLocationNo());
-        existing.setRegistrationNo(updatedShop.getRegistrationNo());
-        existing.setAreaSqft(updatedShop.getAreaSqft());
-        existing.setOwnerName(updatedShop.getOwnerName());
-        existing.setOwnerPhone(updatedShop.getOwnerPhone());
-        existing.setRemarks(updatedShop.getRemarks());
-        existing.setActive(updatedShop.getActive());
+
+        // Fetch market by ID if changed
+        Market market = marketRepository.findById(dto.getMarketId())
+                .orElseThrow(() -> new EntityNotFoundException("Market not found with id=" + dto.getMarketId()));
+
+        existing.setShopNumber(dto.getShopNumber());
+        existing.setCode(dto.getCode());
+        existing.setShopName(dto.getShopName());
+        existing.setMarket(market);
+        existing.setFloor(dto.getFloor());
+        existing.setSide(dto.getSide());
+        existing.setLocation(dto.getLocation());
+        existing.setLocationNo(dto.getLocationNo());
+        existing.setRegistrationNo(dto.getRegistrationNo());
+        existing.setAreaSqft(dto.getAreaSqft());
+        existing.setOwnerName(dto.getOwnerName());
+        existing.setOwnerPhone(dto.getOwnerPhone());
+        existing.setRemarks(dto.getRemarks());
+        existing.setActive(dto.getActive());
+
+        sanitizeShopInputs(existing);
         return shopRepository.save(existing);
     }
 
@@ -142,9 +154,6 @@ public class ShopService {
         }
         if (shop.getShopName() != null) {
             shop.setShopName(Encode.forHtml(shop.getShopName()));
-        }
-        if (shop.getMarket() != null) {
-            shop.setMarket(Encode.forHtml(shop.getMarket()));
         }
         if (shop.getSide() != null) {
             shop.setSide(Encode.forHtml(shop.getSide()));

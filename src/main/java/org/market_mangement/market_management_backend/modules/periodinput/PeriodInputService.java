@@ -22,7 +22,7 @@ public class PeriodInputService {
     }
 
     public Optional<PeriodInput> getPeriodInputByPeriod(String period) {
-        return periodInputRepository.findById(period);
+        return periodInputRepository.findById(LocalDate.parse(period));
     }
 
     public PeriodInput createPeriodInput(PeriodInput periodInput) {
@@ -35,6 +35,6 @@ public class PeriodInputService {
     }
 
     public void deletePeriodInput(String period) {
-        periodInputRepository.deleteById(period);
+        periodInputRepository.deleteById(LocalDate.parse(period));
     }
 }
